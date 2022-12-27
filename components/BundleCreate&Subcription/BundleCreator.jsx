@@ -6,9 +6,11 @@ import axios from "axios";
 
 const BundleCreator = () => {
   const [quantity, setQuantity] = useState(0);
+
   const [posts, setPosts] = useState([]);
-  const [bundle, setBundle] = useState([]);
+  const [bundles, setBundle] = useState([]);
   const [attributes, setAttribute] = useState([]);
+
   const [isError, setIsError] = useState("");
   const regex = /(<([^>]+)>)/gi;
 
@@ -32,29 +34,43 @@ const BundleCreator = () => {
     setQuantity(quantity + 1);
   };
 
-  const apiEndPoint =
-    "https://cms.cybertizeweb.com/boxoniq-crm/api/app/next/product-super-cat-web-bo.php";
+  const baseUrl = "https://cms.cybertizeweb.com/boxoniq-crm/";
 
-  const getPosts = async () => {
+  const apiEndPoint = `${baseUrl}api/app/next/product-super-cat-web-bo.php`;
+  const apiEndPoint2 =
+    "https://cms.cybertizeweb.com/boxoniq-crm/api/app/next/super-cat-bo.php";
+
+  const getPosts = async (id) => {
     try {
       const res = await axios.post(apiEndPoint, {
-        sequence: 1,
+        sequence: id,
       });
-      setPosts(res.data.product);
-      setBundle(res.data);
-      setAttribute(res.data.product[0].attribute);
+      if (res.data) {
+        setPosts(res.data.product);
+        setAttribute(res.data.product[0].attribute);
+      }
     } catch (error) {
       setIsError(error.message);
     }
   };
 
-  console.log(posts);
+  const getData = async () => {
+    try {
+      const res = await axios.post(apiEndPoint2);
+      if (res.data) {
+        setBundle(res.data);
+      }
+    } catch (error) {
+      setIsError(error.message);
+    }
+  };
 
   // NOTE:  calling the function
   useEffect(() => {
-    getPosts();
+    getPosts(1);
+    getData(1);
   }, []);
-
+  console.log(bundles);
   return (
     <div>
       <div className="container">
@@ -106,11 +122,11 @@ const BundleCreator = () => {
               <div className="row ">
                 <div className="col-12 col-lg-12">
                   <div className="button_area">
-                    <button>{bundle.name}</button>
-                    <button>{bundle.name}</button>
-                    <button>{bundle.name}</button>
-                    <button>{bundle.name}</button>
-                    <button>{bundle.name}</button>
+                    {bundles.map((bundle) => (
+                      <button key={bundle.id} onClick={() => getPosts(2)}>
+                        {bundle.name}
+                      </button>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -122,13 +138,13 @@ const BundleCreator = () => {
             <div className="row">
               <div className="col-3 col-lg-2">
                 <div className="check_des_area">
-                  <img src={bundle.img} alt="" />
+                  <img src={bundles.img} alt="" />
                 </div>
               </div>
               <div className="col-9 col-lg-10">
                 <div className="chek_text">
-                  <h4>{bundle.name}</h4>
-                  <p>{bundle.desc}</p>
+                  <h4>{bundles.name}</h4>
+                  <p>{bundles.desc}</p>
                 </div>
               </div>
             </div>
