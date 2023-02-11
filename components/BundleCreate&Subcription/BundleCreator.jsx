@@ -8,9 +8,13 @@ const BundleCreator = () => {
   const [quantity, setQuantity] = useState(0);
 
   const [posts, setPosts] = useState([]);
-  const [bundles, setBundle] = useState([]);
+  const [bundle, setBundle] = useState([]);
   const [attributes, setAttribute] = useState([]);
+  const [diaper, setDiaper] = useState({});
+  // complete
+  const [myData, setMyData] = useState([]);
 
+  // const [sequenceId, setSequenceId] = useState([]);
   const [isError, setIsError] = useState("");
   const regex = /(<([^>]+)>)/gi;
 
@@ -29,103 +33,81 @@ const BundleCreator = () => {
       setQuantity(0);
     }
   };
-
   const handleIncrement = () => {
     setQuantity(quantity + 1);
   };
 
-  const baseUrl = "https://cms.cybertizeweb.com/boxoniq-crm/";
-
+  const baseUrl = "https://cms.boxoniq.com/";
   const apiEndPoint = `${baseUrl}api/app/next/product-super-cat-web-bo.php`;
-  const apiEndPoint2 =
-    "https://cms.cybertizeweb.com/boxoniq-crm/api/app/next/super-cat-bo.php";
+  const apiEndPoint2 = `${baseUrl}api/app/next/super-cat-bo.php`;
 
+  // post function
   const getPosts = async (id) => {
     try {
       const res = await axios.post(apiEndPoint, {
         sequence: id,
       });
-      if (res.data) {
-        setPosts(res.data.product);
-        setAttribute(res.data.product[0].attribute);
-      }
+      setBundle(res.data);
+      setPosts(res.data.product);
+      setAttribute(res.data.product[0].attribute);
+      // setSequenceId(res.data.product[0].id);
     } catch (error) {
       setIsError(error.message);
     }
   };
 
-  const getData = async () => {
+  // get function
+  const getMyPostData = async () => {
     try {
-      const res = await axios.post(apiEndPoint2);
-      if (res.data) {
-        setBundle(res.data);
-      }
+      const res = await axios.get(apiEndPoint2);
+      setMyData(res.data);
     } catch (error) {
       setIsError(error.message);
     }
   };
 
-  // NOTE:  calling the function
+  // NOTE:  calling post the function
   useEffect(() => {
     getPosts(1);
-    getData(1);
   }, []);
-  console.log(bundles);
+
+  // NOTE:  calling get the function
+  useEffect(() => {
+    getMyPostData();
+  }, []);
+
+  console.log(attributes);
+
+  const attributeFill = (attribute, postId) => {
+    setDiaper({});
+    if (attribute.product_id === postId) {
+      setDiaper(attribute);
+      console.log("yes");
+    } else {
+      console.log("no");
+    }
+  };
+
   return (
     <div>
       <div className="container">
         <div className="bundle_sub_section bundle_create_section ">
-          <div className="container-fluid plr_40 ">
-            <div className="row">
-              <div className="col-lg-12">
-                {/* bundle wrap started */}
-                <div className="check_out_heading">
-                  <div className="bundle_wrap">
-                    <div className="bundle_heading">
-                      <h1>Create Your Bundle</h1>
-                      <Button
-                        className="add_more_btn filter_btn btn-primary my-3 my-lg-0 d-none d-md-block d-lg-block"
-                        variant="primary"
-                        onClick={oneShow}
-                      >
-                        <img
-                          src="https://i.ibb.co/yqm1v4Q/filter-list.png"
-                          alt=""
-                        />
-                        Filter
-                      </Button>
-
-                      <Button
-                        className="add_more_btn filter_btn btn-success d-none d-md-block d-lg-block"
-                        variant="primary"
-                        onClick={twoShow}
-                      >
-                        <img
-                          src="https://i.ibb.co/yqm1v4Q/filter-list.png"
-                          alt=""
-                        />
-                        Shortings
-                      </Button>
-                    </div>
-                    <p>
-                      Select from the list of products from different categories
-                    </p>
-                  </div>
-                </div>
-                {/* bundle wrap ended */}
-              </div>
-            </div>
-          </div>
+          <div className="container-fluid plr_40 "></div>
           {/* categories started */}
           <div className="finter_area d-none d-md-block d-lg-block">
             <div className="container-fluid plr_40">
               <div className="row ">
                 <div className="col-12 col-lg-12">
                   <div className="button_area">
-                    {bundles.map((bundle) => (
-                      <button key={bundle.id} onClick={() => getPosts(2)}>
-                        {bundle.name}
-                      </button>
+                    {myData.map((data, i) => (
+                      <div
+                        key={data.id}
+                        className="bundle_price_gm price_gm_one "
+                      >
+                        <button onClick={() => getPosts(i + 1)}>
+                          {data.name}
+                        </button>
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -138,13 +120,13 @@ const BundleCreator = () => {
             <div className="row">
               <div className="col-3 col-lg-2">
                 <div className="check_des_area">
-                  <img src={bundles.img} alt="" />
+                  <img src={bundle.img} alt="" />
                 </div>
               </div>
               <div className="col-9 col-lg-10">
                 <div className="chek_text">
-                  <h4>{bundles.name}</h4>
-                  <p>{bundles.desc}</p>
+                  <h4>{bundle.name}</h4>
+                  <p>{bundle.desc}</p>
                 </div>
               </div>
             </div>
@@ -163,7 +145,12 @@ const BundleCreator = () => {
                         <p>{post.short_detail.replace(regex, "")}</p>
                         <div className="bundle_cart_prices d-flex">
                           <div className="bundle_price_one ">
-                            <h6>{post.item_price}</h6>
+                            {/* {diaper?.product_id === post.id ? (
+                              
+                            ) : (
+                              <h6>{post.item_price}</h6>
+                            )} */}
+                            <h6>{diaper?.price}</h6>
                           </div>
                           <div className="bundle_price_two ms-3">
                             <div className="line"></div>
@@ -179,7 +166,13 @@ const BundleCreator = () => {
                             key={attribute.id}
                             className="bundle_price_gm price_gm_one "
                           >
-                            <span>{attribute.name}</span>
+                            {/* button */}
+                            <button
+                              onClick={() => attributeFill(attribute, post.id)}
+                              style={{ color: "red" }}
+                            >
+                              {attribute.name}
+                            </button>
                           </div>
                         ))}
 

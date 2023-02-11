@@ -9,7 +9,7 @@ import Bundlebenefits from '../components/HomePage/Bundlebenefits.jsx';
 import Brands from '../components/HomePage/Brands.jsx';
 import WhyChooseSection from '../components/HomePage/WhyChooseSection.jsx';
 import Contact from '../components/HomePage/Contact.jsx';
-import Shop from '../components/HomePage/Shop.jsx';
+
 
 
 
@@ -26,8 +26,8 @@ export default function Home() {
       <Navbar />
       <Slider />
       <Createbundle />
+
       <Bundlebenefits />
-      <Shop />
       <Brands />
       <WhyChooseSection />
       <Contact />

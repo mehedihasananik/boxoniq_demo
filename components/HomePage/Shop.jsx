@@ -4,40 +4,40 @@ import axios from "axios";
 const Shop = () => {
   const [posts, setPosts] = useState([]);
   const [isError, setIsError] = useState("");
-  // const apiEndPoint =
-  //   "https://cms.cybertizeweb.com/boxoniq-crm/api/app/next/super-cat-bo.php";
+  const apiEndPoint =
+    "https://cms.cybertizeweb.com/boxoniq-crm/api/app/next/super-cat-bo.php";
 
-  // const getPosts = async () => {
-  //   try {
-  //     const res = await axios.get(apiEndPoint);
-  //     setPosts(res.data);
-  //     console.log(res);
-  //   } catch (error) {
-  //     setIsError(error.message);
-  //   }
-  // };
-  // // NOTE:  calling the function
-  // useEffect(() => {
-  //   getPosts();
-  // }, []);
-
-  fetch(
-    "https://cms.cybertizeweb.com/boxoniq-crm/api/app/next/product-super-cat-web-bo.php",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        sequence: 1,
-      }),
+  const getPosts = async () => {
+    try {
+      const res = await axios.get(apiEndPoint);
+      setPosts(res.data);
+      console.log(res);
+    } catch (error) {
+      setIsError(error.message);
     }
-  )
-    .then((res) => {
-      return res.json();
-    })
-    .then((data) => setPosts(data.product))
-    .catch((error) => console.log("error"));
+  };
+  // NOTE:  calling the function
+  useEffect(() => {
+    getPosts();
+  }, []);
+
+  // fetch(
+  //   "https://cms.cybertizeweb.com/boxoniq-crm/api/app/next/product-super-cat-web-bo.php",
+  //   {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify({
+  //       sequence: 1,
+  //     }),
+  //   }
+  // )
+  //   .then((res) => {
+  //     return res.json();
+  //   })
+  //   .then((data) => setPosts(data.product))
+  //   .catch((error) => console.log("error"));
 
   return (
     <div className="container">
